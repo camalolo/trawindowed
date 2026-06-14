@@ -352,6 +352,11 @@ namespace trashim
         {
             return is_arg_present(L"-nomousecapture");
         }
+
+        bool is_limiter_disabled()
+        {
+            return is_arg_present(L"-nolimiter");
+        }
     }
 
     void initialise_shim(HWND window, uint32_t back_buffer_width, uint32_t back_buffer_height, uint32_t display_width, uint32_t display_height, bool vsync, uint32_t framerate)
@@ -433,6 +438,12 @@ namespace trashim
             return;
         }
 
+        // When -nolimiter is set, let D3D9/DWM handle vsync natively.
+        if (is_limiter_disabled())
+        {
+            return;
+        }
+
         while (get_frame_difference() < desired_frame_interval)
         {
             // Busy wait.
@@ -444,5 +455,10 @@ namespace trashim
     void start_fps_emulation()
     {
         frame_timer_enabled = true;
+    }
+
+    bool no_limiter_enabled()
+    {
+        return is_limiter_disabled();
     }
 }
